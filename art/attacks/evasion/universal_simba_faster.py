@@ -39,7 +39,7 @@ from art.utils import projection
 logger = logging.getLogger(__name__)
 
 
-class Universal_SimBA(EvasionAttack):
+class Universal_SimBA_faster(EvasionAttack):
     attack_params = EvasionAttack.attack_params + [
         'attack',
         'max_iter',
@@ -99,7 +99,7 @@ class Universal_SimBA(EvasionAttack):
         :param batch_size: Internal size of batches on which adversarial samples are generated.
         :type batch_size: `int`
         """
-        super(Universal_SimBA, self).__init__(estimator=classifier)
+        super(Universal_SimBA_faster, self).__init__(estimator=classifier)
         self.attack = attack
         self.max_iter = max_iter
         self.epsilon = epsilon
