@@ -47,6 +47,7 @@ class Universal_SimBA_faster(EvasionAttack):
         'order',
         'freq_dim',
         'stride',
+        'skip',
         'targeted',
         'delta',
         'eps',
@@ -65,6 +66,7 @@ class Universal_SimBA_faster(EvasionAttack):
         order: str = 'random',
         freq_dim: int = 4,
         stride: int = 1,
+        skip: int = 1,
         targeted: bool = False,
         delta: float = 0.01,
         eps: float = 10.0,
@@ -106,6 +108,7 @@ class Universal_SimBA_faster(EvasionAttack):
         self.order = order
         self.freq_dim = freq_dim
         self.stride = stride
+        self.skip = skip
         self.targeted = targeted
         self.delta = delta
         self.eps = eps
@@ -186,7 +189,7 @@ class Universal_SimBA_faster(EvasionAttack):
             else:
                 diff[indices[nb_iter]] = -self.epsilon
 
-            if (nb_iter + 1) % 100 == 0:
+            if (nb_iter + 1) % self.skip == 0:
                 if self.attack == 'dct':
                     left_noise = noise + trans(diff.reshape(x[0][None, ...].shape))
                     left_noise = projection(left_noise, self.eps, self.norm)
@@ -219,7 +222,7 @@ class Universal_SimBA_faster(EvasionAttack):
                 
             nb_iter = nb_iter + 1
 
-            if nb_iter % 1000 == 0:
+            if (nb_iter + 1) % (self.skip * 10) == 0:
                 val_norm = np.linalg.norm(noise.flatten(), ord=self.norm)
                 logger.info('Success rate of Universal SimBA (%s) %s attack at %d iterations: %.2f%% (L%s norm of noise: %.2f)', self.attack, ['non-targeted', 'targeted'][self.targeted], nb_iter, 100 * success_rate, str(self.norm), val_norm)
 
@@ -243,6 +246,9 @@ class Universal_SimBA_faster(EvasionAttack):
         
         if not isinstance(self.stride, (int, np.int)) or self.stride <= 0:
             raise ValueError("The `stride` value must be a positive integer.")
+
+        if not isinstance(self.skip, (int, np.int)) or self.skip <= 0:
+            raise ValueError("The `skip` value must be a positive integer.")
         
         if not isinstance(self.freq_dim, (int, np.int)) or self.freq_dim <= 0:
             raise ValueError("The `freq_dim` value must be a positive integer.")
