@@ -177,16 +177,16 @@ class Universal_SimBA_faster(EvasionAttack):
             clip_min, clip_max = self.estimator.clip_values
 
         success_rate = 0.0
-        nb_iter = 1
+        nb_iter = 0
         noise = 0
         diff = np.zeros(n_dims)
-        while success_rate < 1. - self.delta and nb_iter <= self.max_iter:
+        while success_rate < 1. - self.delta and nb_iter < self.max_iter:
             if np.random.rand() < 0.5:
                 diff[indices[nb_iter]] = self.epsilon
             else:
                 diff[indices[nb_iter]] = -self.epsilon
 
-            if nb_iter % 50 == 0:
+            if (nb_iter + 1) % 100 == 0:
                 if self.attack == 'dct':
                     left_noise = noise + trans(diff.reshape(x[0][None, ...].shape))
                     left_noise = projection(left_noise, self.eps, self.norm)
@@ -219,7 +219,7 @@ class Universal_SimBA_faster(EvasionAttack):
                 
             nb_iter = nb_iter + 1
 
-            if nb_iter % 500 == 0:
+            if nb_iter % 1000 == 0:
                 val_norm = np.linalg.norm(noise.flatten(), ord=self.norm)
                 logger.info('Success rate of Universal SimBA (%s) %s attack at %d iterations: %.2f%% (L%s norm of noise: %.2f)', self.attack, ['non-targeted', 'targeted'][self.targeted], nb_iter, 100 * success_rate, str(self.norm), val_norm)
 
