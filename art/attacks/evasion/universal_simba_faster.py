@@ -222,7 +222,7 @@ class Universal_SimBA_faster(EvasionAttack):
                 
             nb_iter = nb_iter + 1
 
-            if (nb_iter + 1) % (self.skip * 10) == 0:
+            if nb_iter % (self.skip * 10) == 0:
                 val_norm = np.linalg.norm(noise.flatten(), ord=self.norm)
                 logger.info('Success rate of Universal SimBA (%s) %s attack at %d iterations: %.2f%% (L%s norm of noise: %.2f)', self.attack, ['non-targeted', 'targeted'][self.targeted], nb_iter, 100 * success_rate, str(self.norm), val_norm)
 
