@@ -116,7 +116,7 @@ class Universal_SimBA_faster(EvasionAttack):
         self.batch_size = batch_size
         self._check_params()
 
-    def generate(self, x, y=None, **kwargs) -> np.ndarray:
+    def generate(self, x, y=None, init_noise=None, restart=-1, **kwargs) -> np.ndarray:
         """
         Generate adversarial samples and return them in an array.
 
@@ -180,8 +180,14 @@ class Universal_SimBA_faster(EvasionAttack):
             clip_min, clip_max = self.estimator.clip_values
 
         success_rate = 0.0
-        nb_iter = 0
-        noise = 0
+
+        if restart < 0:
+            nb_iter = 0
+            noise = 0
+        else:
+            nb_iter = restart
+            noise = init_noise
+
         diff = np.zeros(n_dims)
         while success_rate < 1. - self.delta and nb_iter < self.max_iter:
             if np.random.rand() < 0.5:
