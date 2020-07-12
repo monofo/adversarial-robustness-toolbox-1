@@ -142,8 +142,14 @@ class Universal_SimBA_faster(EvasionAttack):
             y_i = np.argmax(y, axis=1)
 
         desired_labels = y_i
-        current_labels = np.argmax(preds, axis=1)
-        last_probs = preds[(range(nb_instances), desired_labels)]
+        
+        if restart < 0:
+            current_labels = np.argmax(preds, axis=1)
+            last_probs = preds[(range(nb_instances), desired_labels)]
+        else:
+            preds = self.estimator.predict(x + init_noise, batch_size=self.batch_size)
+            current_labels = np.argmax(preds, axis=1)
+            last_probs = preds[(range(nb_instances), desired_labels)]
 
         if self.estimator.channels_first:
             nb_channels = x.shape[1]
