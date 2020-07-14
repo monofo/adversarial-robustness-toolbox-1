@@ -134,14 +134,14 @@ class Universal_SimBA_CG(EvasionAttack):
             nb_channels = x.shape[1]
             if x.shape[2] % self.coarse_grain > 0 or x.shape[3] % self.coarse_grain > 0:
                 raise ValueError('image size needs to be divisible by coarse grain level')
-            img_width_coarse_grain = x.shape[2] / self.coarse_grain
-            img_height_coarse_grain = x.shape[3] / self.coarse_grain
+            img_width_coarse_grain = int(x.shape[2] / self.coarse_grain)
+            img_height_coarse_grain = int(x.shape[3] / self.coarse_grain)
         else:
             nb_channels = x.shape[3]
             if x.shape[1] % self.coarse_grain > 0 or x.shape[2] % self.coarse_grain > 0:
                 raise ValueError('image size needs to be divisible by coarse grain level')
-            img_width_coarse_grain = x.shape[1] / self.coarse_grain
-            img_height_coarse_grain = x.shape[2] / self.coarse_grain
+            img_width_coarse_grain = int(x.shape[1] / self.coarse_grain)
+            img_height_coarse_grain = int(x.shape[2] / self.coarse_grain)
 
         if y is None:
             if self.targeted:
