@@ -221,39 +221,33 @@ class Universal_SimBA_CG(EvasionAttack):
             left_preds = self.estimator.predict(np.clip(x + left_noise, clip_min, clip_max), batch_size=self.batch_size)
             left_probs = left_preds[(range(nb_instances), desired_labels)]
 
-            right_noise = noise + add_noise
-            right_noise = projection(right_noise, self.eps, self.norm)
-
-            right_preds = self.estimator.predict(np.clip(x + right_noise, clip_min, clip_max), batch_size=self.batch_size)
-            right_probs = right_preds[(range(nb_instances), desired_labels)]
-
             # use Use (2 * int(self.targeted) - 1) to shorten code?
             if self.targeted:
                 if np.sum(left_probs - last_probs) > 0.0:
-                    if np.sum(left_probs - right_probs) > 0.0:
-                        last_probs = left_probs
-                        noise = left_noise
-                        current_labels = np.argmax(left_preds, axis=1)
-                    else:
-                        last_probs = right_probs
-                        noise = right_noise
-                        current_labels = np.argmax(right_preds, axis=1)
+                    last_probs = left_probs
+                    noise = left_noise
+                    current_labels = np.argmax(left_preds, axis=1)
                 else:
+                    right_noise = noise + add_noise
+                    right_noise = projection(right_noise, self.eps, self.norm)
+
+                    right_preds = self.estimator.predict(np.clip(x + right_noise, clip_min, clip_max), batch_size=self.batch_size)
+                    right_probs = right_preds[(range(nb_instances), desired_labels)]
                     if np.sum(right_probs - last_probs) > 0.0:
                         last_probs = right_probs
                         noise = right_noise
                         current_labels = np.argmax(right_preds, axis=1)
             else:
                 if np.sum(left_probs - last_probs) < 0.0:
-                    if np.sum(left_probs - right_probs) < 0.0:
-                        last_probs = left_probs
-                        noise = left_noise
-                        current_labels = np.argmax(left_preds, axis=1)
-                    else:
-                        last_probs = right_probs
-                        noise = right_noise
-                        current_labels = np.argmax(right_preds, axis=1)
+                    last_probs = left_probs
+                    noise = left_noise
+                    current_labels = np.argmax(left_preds, axis=1)
                 else:
+                    right_noise = noise + add_noise
+                    right_noise = projection(right_noise, self.eps, self.norm)
+
+                    right_preds = self.estimator.predict(np.clip(x + right_noise, clip_min, clip_max), batch_size=self.batch_size)
+                    right_probs = right_preds[(range(nb_instances), desired_labels)]
                     if np.sum(right_probs - last_probs) < 0.0:
                         last_probs = right_probs
                         noise = right_noise
