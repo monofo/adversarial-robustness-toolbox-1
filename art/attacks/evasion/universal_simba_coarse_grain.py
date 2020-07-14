@@ -211,7 +211,7 @@ class Universal_SimBA_CG(EvasionAttack):
             elif self.attack == 'px':
                 add_noise = diff.reshape(1, img_width_coarse_grain, img_height_coarse_grain, nb_channels)
 
-            add_noise = add_noise.repeat(self.coarse_grain, axis=0).repeat(self.coarse_grain, axis=1).shape
+            add_noise = add_noise.repeat(self.coarse_grain, axis=0).repeat(self.coarse_grain, axis=1)
 
             left_noise = noise - add_noise
             left_noise = projection(left_noise, self.eps, self.norm)
