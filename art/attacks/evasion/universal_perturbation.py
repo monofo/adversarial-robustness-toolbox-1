@@ -124,6 +124,9 @@ class UniversalPerturbation(EvasionAttack):
         if y is None:
             logger.info("Using model predictions as the correct labels for UAP.")
             pred_y = self.estimator.predict(x, batch_size=1)
+        else:
+            pred_y = y
+        
         correct_y_max = np.argmax(pred_y, axis=1)
 
         # Generate the adversarial examples

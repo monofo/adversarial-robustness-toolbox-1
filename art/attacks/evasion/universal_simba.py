@@ -22,6 +22,7 @@ This module implements the black-box universal attack `simba`.
 from __future__ import absolute_import, division, print_function, unicode_literals
 
 import logging
+from typing import Union
 
 import numpy as np
 from scipy.fftpack import dct, idct
@@ -68,7 +69,7 @@ class Universal_SimBA(EvasionAttack):
         targeted: bool = False,
         delta: float = 0.01,
         eps: float = 10.0,
-        norm: int = 2,
+        norm: Union[int, float, str] = np.inf,
         batch_size: int = 1
     ):
         """
@@ -96,7 +97,7 @@ class Universal_SimBA(EvasionAttack):
         :type eps: `float`
         :param norm: The norm of the adversarial perturbation. Possible values: np.inf, 2
         :type norm: `int`
-        :param batch_size: Internal size of batches on which adversarial samples are generated.
+        :param batch_size: Internal size of batches for prediction.
         :type batch_size: `int`
         """
         super(Universal_SimBA, self).__init__(estimator=classifier)

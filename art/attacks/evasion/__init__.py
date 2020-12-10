@@ -44,3 +44,4 @@ from art.attacks.evasion.simba import SimBA
 from art.attacks.evasion.universal_simba import Universal_SimBA
 from art.attacks.evasion.universal_simba_faster import Universal_SimBA_faster
 from art.attacks.evasion.universal_simba_coarse_grain import Universal_SimBA_CG
+from art.attacks.evasion.fourier_attack import FourierAttack
