@@ -99,6 +99,8 @@ class FourierAttack(EvasionAttack):
         if nb_xdim != nb_ydim:
             raise ValueError('Input images must be square.')
 
+        clip_min = -np.inf
+        clip_max = np.inf
         if self.estimator.clip_values is not None:
             clip_min, clip_max = self.estimator.clip_values
 
