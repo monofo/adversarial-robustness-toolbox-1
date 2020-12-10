@@ -109,7 +109,7 @@ class FourierAttack(EvasionAttack):
         # get the labels
         if y is None:
             # use the predicted labels
-            logger.info("Using model predictions as the correct labels for UAP.")
+            logger.info("Using model predictions as the correct labels.")
             pred_y = self.estimator.predict(x, batch_size=self.batch_size)
         else:
             # use the actual labels
