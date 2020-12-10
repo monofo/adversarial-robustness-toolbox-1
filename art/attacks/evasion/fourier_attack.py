@@ -43,6 +43,7 @@ logger = logging.getLogger(__name__)
 class FourierAttack(EvasionAttack):
     attack_params = EvasionAttack.attack_params + [
         'epsilon',
+        'block_size',
         'eps',
         'norm',
         'batch_size',
@@ -54,6 +55,7 @@ class FourierAttack(EvasionAttack):
         self,
         classifier: ClassifierGradients,
         epsilon: float = 20.0,
+        block_size: int = 4,
         eps: float = 0.1,
         norm: Union[int, float, str] = np.inf,
         batch_size: int = 1,
@@ -62,12 +64,14 @@ class FourierAttack(EvasionAttack):
         Create a single Fourier attack instance.
 
         :param epsilon: overshoot parameter
+        :param block_size: block size for Fourier attacks.
         :param eps: noise size
         :param batch_size: Internal size of batches for prediction.
         :param norm: The norm of the adversarial perturbation. Possible values: "inf", np.inf, 2
         """
         super(FourierAttack, self).__init__(estimator=classifier)
         self.epsilon = epsilon
+        self.block_size = block_size
         self.eps = eps
         self.norm = norm
         self.batch_size = batch_size
@@ -117,17 +121,17 @@ class FourierAttack(EvasionAttack):
         
         correct_y_max = np.argmax(pred_y, axis=1)
 
-        nb_iter = 0
-        for i in range(nb_xdim):
-            for j in range(nb_ydim):
+        nb_blocks = int(nb_xdim / self.block_size)
+        for i in range(nb_blocks):
+            for j in range(nb_blocks):
                 # get Fourier basis
                 xf = np.zeros((nb_xdim, nb_ydim))
-                xf[i, j] = 1.0
+                xf[i * self.block_size, j * self.block_size] = 1.0
                 Z = ifftn(xf)
                 uap_sfa_1 = np.real(Z)
 
                 xf = np.zeros((nb_xdim, nb_ydim))
-                xf[nb_xdim - i - 1, nb_ydim - j - 1] = 1.0
+                xf[nb_xdim - i * self.block_size - 1, nb_ydim - j * self.block_size - 1] = 1.0
                 Z = ifftn(xf)
                 uap_sfa_2 = np.real(Z)
 
@@ -155,12 +159,9 @@ class FourierAttack(EvasionAttack):
                 if max_fooling_rate < fooling_rate:
                     max_fooling_rate = fooling_rate
                     noise = tmp_noise
-                
-                nb_iter = nb_iter + 1
 
-                if nb_iter % 10 == 0:
-                    val_norm = np.linalg.norm(noise.flatten(), ord=self.norm)
-                    logger.info('Success rate of Fourier attack at %d iterations: %.2f%% (L%s norm of noise: %.2f)', nb_iter, 100 * max_fooling_rate, str(self.norm), val_norm)
+            val_norm = np.linalg.norm(noise.flatten(), ord=self.norm)
+            logger.info('Success rate of Fourier attack at section %d: %.2f%% (L%s norm of noise: %.2f)', i, 100 * max_fooling_rate, str(self.norm), val_norm)
 
         self.fooling_rate = max_fooling_rate
         self.noise = noise
