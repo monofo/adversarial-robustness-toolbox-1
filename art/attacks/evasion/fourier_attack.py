@@ -100,6 +100,8 @@ class FourierAttack(EvasionAttack):
 
         # Init
         noise = np.zeros((1, nb_xdim, nb_ydim, nb_channels))
+        if self.estimator.channels_first:
+            noise = noise.transpose(0, 3, 1, 2)
         fooling_rate = 0.0
         max_fooling_rate = 0.0
         nb_instances = len(x)
