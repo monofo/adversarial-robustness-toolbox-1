@@ -154,7 +154,7 @@ class FourierAttack(EvasionAttack):
                 if self.estimator.clip_values is not None:
                     x_adv = np.clip(x_adv, clip_min, clip_max)
 
-                # Compute the error rate
+                # Compute the fooling rate
                 y_adv = np.argmax(self.estimator.predict(x_adv, batch_size=self.batch_size), axis=1)
                 fooling_rate = np.sum(correct_y_max != y_adv) / nb_instances
 
@@ -179,6 +179,9 @@ class FourierAttack(EvasionAttack):
 
         if self.epsilon < 0:
             raise ValueError("The overshoot parameter must not be negative.")
+
+        if self.block_size <= 0:
+            raise ValueError('The block size `block_size` has to be positive.')
 
         if not isinstance(self.eps, (float, int)) or self.eps <= 0:
             raise ValueError("The eps coefficient must be a positive float.")
