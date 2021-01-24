@@ -249,6 +249,7 @@ class Universal_SimBA(EvasionAttack):
                 logger.info('Success rate of Universal SimBA (%s) %s attack at %d iterations: %.2f%% (L%s norm of noise: %.2f)', self.attack, ['non-targeted', 'targeted'][self.targeted], nb_iter, 100 * success_rate, str(self.norm), val_norm)
 
         logger.info('Final success rate of Universal SimBA (%s) %s attack: %.2f%%', self.attack, ['non-targeted', 'targeted'][self.targeted], 100 * success_rate)
+        self.noise = noise
         return x + noise
 
 
